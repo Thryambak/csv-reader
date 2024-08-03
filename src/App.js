@@ -4,8 +4,8 @@ import DataTable from "./components/DataTable";
 
 const App = () => {
   const [content, setContent] = useState(null);
-  const [results, setResults] = useState(["Click,Search"]);
-  const [searchString, setSearchString] = useState(null);
+  const [results, setResults] = useState([]);
+  const [searchString, setSearchString] = useState("");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -20,12 +20,12 @@ const App = () => {
   };
 
   const search = () => {
-    if (searchString == null) {
-      alert("Search value cant be empty");
+    if (searchString.trim() === "") {
+      alert("Search value can't be empty");
       return;
     }
-    if (content == null || content == "") {
-      alert("Please chose a file before searching");
+    if (!content) {
+      alert("Please choose a file before searching");
       return;
     }
 
@@ -35,8 +35,11 @@ const App = () => {
   return (
     <div>
       <input type="file" onChange={handleFileChange}></input>
-      {/* <div>{content}</div> */}
-      <input onChange={(e) => setSearchString(e.target.value)}></input>
+      <input
+        type="text"
+        placeholder="Enter search string"
+        onChange={(e) => setSearchString(e.target.value)}
+      ></input>
       <button
         style={{ height: "20px", width: "60px", marginLeft: "20px" }}
         onClick={search}

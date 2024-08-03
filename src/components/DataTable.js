@@ -1,22 +1,36 @@
-const DataTable = ({ data }) => {
-  if (data != undefined && data.length > 0) {
-    const header = data[0];
-    data = data.shift();
-    console.log(header);
+import React from "react";
+import "./DataTable.css"; // Import the CSS file
 
-    return (
-      <table style={{ border: "5px", width: "100%" }}>
-        <thead>
-          <tr>
-            {header.split(",").map((element) => (
-              <th key={element}>{element}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    );
+const DataTable = ({ data }) => {
+  if (data.length === 0) {
+    return <div>No data available</div>;
   }
+
+  const headers = data[0].split(",");
+
+  return (
+    <table className="data-table">
+      <thead>
+        <tr>
+          {headers.map((header, index) => (
+            <th key={index}>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.slice(1).map((row, index) => {
+          const cells = row.split(",");
+          return (
+            <tr key={index}>
+              {cells.map((cell, i) => (
+                <td key={i}>{cell}</td>
+              ))}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
 };
 
 export default DataTable;
