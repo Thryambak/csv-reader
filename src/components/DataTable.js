@@ -1,12 +1,12 @@
 import React from "react";
-import "./DataTable.css"; // Import the CSS file
+import "./DataTable.css";
 
 const DataTable = ({ data }) => {
   if (data.length === 0) {
     return <div>No data available</div>;
   }
 
-  const headers = data[0].split(",");
+  const headers = data[0];
 
   return (
     <table className="data-table">
@@ -18,16 +18,13 @@ const DataTable = ({ data }) => {
         </tr>
       </thead>
       <tbody>
-        {data.slice(1).map((row, index) => {
-          const cells = row.split(",");
-          return (
-            <tr key={index}>
-              {cells.map((cell, i) => (
-                <td key={i}>{cell}</td>
-              ))}
-            </tr>
-          );
-        })}
+        {data.slice(1).map((row, index) => (
+          <tr key={index}>
+            {row.map((cell, i) => (
+              <td key={i}>{cell}</td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   );
