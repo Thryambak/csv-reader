@@ -1,0 +1,31 @@
+import React, { useState } from 'react';
+
+const FileReaderComponent = () => {
+  const [fileContent, setFileContent] = useState('');
+
+  const handleFileRead = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const content = e.target.result;
+      setFileContent(content);
+    };
+
+    if (file) {
+      reader.readAsText(file);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" onChange={handleFileRead} />
+      <div>
+        <h3>File Content:</h3>
+        <pre>{fileContent}</pre>
+      </div>
+    </div>
+  );
+};
+
+export default FileReaderComponent;
