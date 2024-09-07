@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { processCsv } from "./CsvProcessor";
 import DataTable from "./components/DataTable";
 
+let firstVal = 0;
+let lastVal = 0;
+let totalLines = 0;
+
 const App = () => {
   const [content, setContent] = useState(null);
   const [results, setResults] = useState([]);
@@ -9,10 +13,17 @@ const App = () => {
   const [isPreviousVisible, setPreviousVisible] = useState(false);
   const [isNextVisible, setNextVisible] = useState(false);
   const [page, setPage] = useState(1);
-  const [firstVal, setFirstVal] = useState(1);
+  // const [firstVal, setFirstVal] = useState(1);
+  // const [lastVal, setLastVal] = useState(1);
+
+  const setLastVal = (val) => {
+    lastVal = val;
+  };
+  const setFirstVal = (val) => {
+    firstVal = val;
+  };
   let pageSize = 100;
   let endOfResult = content == null;
-  const [lastVal, setLastVal] = useState(1);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -35,14 +46,24 @@ const App = () => {
       return;
     }
 
-    const [processedVal, first, last] = processCsv(
-      searchString,
+    if (showNext === null) {
+      // console.log("null", firstVal, lastVal);
+      showNext = true;
+      setFirstVal(1);
+      setLastVal(1);
+    }
+
+    const [processedVal, first, last, lines] = processCsv(
+      searchString.trim(),
       content,
       firstVal,
       lastVal,
       pageSize,
       showNext
     );
+    totalLines = lines;
+    console.log("lines" + lines);
+    console.log("last", last);
     setLastVal(last);
     setFirstVal(first);
     setResults(processedVal);
@@ -75,7 +96,7 @@ const App = () => {
       ></input>
       <button
         style={{ height: "20px", width: "60px", marginLeft: "20px" }}
-        onClick={search}
+        onClick={() => search(null)}
       >
         Search
       </button>
@@ -87,7 +108,7 @@ const App = () => {
 
       <div>
         {page != 1 && <button onClick={showPreviousPage}>previous</button>}
-        {!endOfResult && <button onClick={showNextPage}>next</button>}
+        {lastVal != totalLines && <button onClick={showNextPage}>next</button>}
       </div>
     </div>
   );

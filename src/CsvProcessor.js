@@ -1,4 +1,4 @@
-import Papa from "papaparse";
+import Papa, { parse } from "papaparse";
 
 export function processCsv(
   search,
@@ -13,6 +13,7 @@ export function processCsv(
       header: false,
       skipEmptyLines: true,
     });
+    console.log(search, firstVal, lastVal);
     const result = [];
 
     const rows = parsedData.data;
@@ -33,7 +34,7 @@ export function processCsv(
           result.push(row);
         }
       }
-      return [result, lastVal, i];
+      return [result, lastVal, i, rows.length];
     } else {
       for (
         i = firstVal;
@@ -47,7 +48,7 @@ export function processCsv(
       }
       result.push(tableHead);
       result.reverse();
-      return [result, i, firstVal];
+      return [result, i, firstVal, rows.length];
     }
   }
   return [];
