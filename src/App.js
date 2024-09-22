@@ -3,7 +3,12 @@ import { processCsv } from "./CsvProcessor";
 import DataTable from "./components/DataTable";
 import SearchPage from "./SearchPage";
 import Login from "./Login";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import FileUploadPage from "./FileUploadPage";
 
 let firstVal = 0;
@@ -18,6 +23,8 @@ const App = () => {
           <Route path="/" element={<Login />} />
           <Route path="/file-upload" element={<FileUploadPage />} />
           <Route path="/search" element={<SearchPage />} />
+          {/* Redirect any invalid URL to home page */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
     </React.StrictMode>

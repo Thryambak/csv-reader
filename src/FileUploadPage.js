@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-const FileUploadPage = ({ authToken }) => {
+const FileUploadPage = () => {
   const [file, setFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -40,9 +40,7 @@ const FileUploadPage = ({ authToken }) => {
     console.log(data);
     try {
       const formData = new FormData();
-      console.log(data);
       formData.append("file", data);
-      console.log(formData);
       const response = await fetch("http://localhost:8443/upload-csv", {
         method: "POST",
         body: formData,
@@ -64,13 +62,18 @@ const FileUploadPage = ({ authToken }) => {
       navigate("/");
     }
   }, [redirect, navigate]);
+
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
-    // console.log(authToken);
     if (!authToken || authToken !== "tempUnsecureToken") {
       setRedirect(true);
     }
-  }, [authToken]);
+  }, []);
+
+  // New function to navigate to the search page
+  const goToSearch = () => {
+    navigate("/search");
+  };
 
   return (
     <div style={styles.container}>
@@ -89,6 +92,11 @@ const FileUploadPage = ({ authToken }) => {
 
       <button onClick={handleUpload} style={styles.button} disabled={!file}>
         Upload File
+      </button>
+
+      {/* Button to navigate to the search page */}
+      <button onClick={goToSearch} style={styles.button}>
+        Go to Search
       </button>
     </div>
   );
@@ -115,6 +123,7 @@ const styles = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
+    margin: "10px", // Added margin for spacing
   },
   error: {
     color: "red",
