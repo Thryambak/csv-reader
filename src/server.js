@@ -24,7 +24,11 @@ client.connect().then(() => {
   console.log("Connected to MongoDB");
 });
 
-app.use(cors({ origin: "https://large-csv-reader.netlify.app" }));
+app.use(
+  cors({
+    origin: "https://66f01db1da8e37afc60776cd--large-csv-reader.netlify.app",
+  })
+);
 app.use(bodyParser.json({ limit: "1gb" }));
 app.use(bodyParser.urlencoded({ limit: "1gb", extended: true }));
 
