@@ -3,7 +3,7 @@ import "./DataTable.css";
 
 const DataTable = ({ data }) => {
   if (data.length === 0) {
-    return <div>No data available</div>;
+    return null;
   }
 
   const headers = data[0];
