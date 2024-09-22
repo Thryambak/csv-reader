@@ -11,23 +11,11 @@ const SearchPage = () => {
   const [content, setContent] = useState(null);
   const [results, setResults] = useState([]);
   const [searchString, setSearchString] = useState("");
-  const [isPreviousVisible, setPreviousVisible] = useState(false);
-  const [isNextVisible, setNextVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const [showSearchButton, setShowSearchButton] = useState(false);
 
-  // const [firstVal, setFirstVal] = useState(1);
-  // const [lastVal, setLastVal] = useState(1);
-
-  const setLastVal = (val) => {
-    lastVal = val;
-  };
-  const setFirstVal = (val) => {
-    firstVal = val;
-  };
-  let pageSize = 100;
-  let endOfResult = content == null;
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -45,17 +33,15 @@ const SearchPage = () => {
       alert("Search value can't be empty");
       return;
     }
-    console.log(content);
     if (!content) {
       alert("Please choose a file before searching");
       return;
     }
 
     if (showNext === null) {
-      // console.log("null", firstVal, lastVal);
       showNext = true;
-      setFirstVal(1);
-      setLastVal(1);
+      firstVal = 1;
+      lastVal = 1;
     }
 
     const [processedVal, first, last, lines] = processCsv(
@@ -63,30 +49,23 @@ const SearchPage = () => {
       content,
       firstVal,
       lastVal,
-      pageSize,
+      100, // pageSize
       showNext
     );
     totalLines = lines;
-    console.log("lines" + lines);
-    console.log("last", last);
-    setLastVal(last);
-    setFirstVal(first);
+    lastVal = last;
+    firstVal = first;
     setResults(processedVal);
   };
 
   const showNextPage = () => {
-    if (content == null) {
-      endOfResult = true;
-      return;
-    }
+    if (content == null) return;
     setPage((previousValue) => previousValue + 1);
     search(true);
   };
 
   const showPreviousPage = () => {
-    if (page === 1) {
-      return;
-    }
+    if (page === 1) return;
     setPage((previousValue) => previousValue - 1);
     search(false);
   };
@@ -95,13 +74,8 @@ const SearchPage = () => {
     try {
       const response = await fetch("http://localhost:8443/download-csv");
       const result = await response.text();
-      console.log(result);
-
-      // if (!result.ok) {
-      //   console.error("Error fetching data:");
-      //   setErrorMessage("Failed to fetch data.");
-      // }
       setContent(result);
+      setShowSearchButton(true);
     } catch (error) {
       console.error("Error fetching data:", error);
       setErrorMessage("Failed to fetch data.");
@@ -121,30 +95,38 @@ const SearchPage = () => {
   }, []);
 
   return (
-    <div>
-      {/* <input type="file" onChange={handleFileChange}></input> */}
+    <div style={styles.container}>
       {errorMessage && <p style={styles.error}>{errorMessage}</p>}
 
-      <input
-        type="text"
-        placeholder="Enter search string"
-        onChange={(e) => setSearchString(e.target.value)}
-      ></input>
-      <button
-        style={{ height: "20px", width: "60px", marginLeft: "20px" }}
-        onClick={() => search(null)}
-      >
-        Search
-      </button>
-
-      <div>
-        <DataTable data={results} />
-        {console.log(page)}
+      <div style={styles.searchContainer}>
+        <input
+          type="text"
+          placeholder="Enter search string"
+          onChange={(e) => setSearchString(e.target.value)}
+          style={styles.input}
+        />
+        {showSearchButton && (
+          <button style={styles.button} onClick={() => search(null)}>
+            Search
+          </button>
+        )}
       </div>
 
-      <div>
-        {page != 1 && <button onClick={showPreviousPage}>previous</button>}
-        {lastVal != totalLines && <button onClick={showNextPage}>next</button>}
+      <div style={styles.tableContainer}>
+        <DataTable data={results} />
+      </div>
+
+      <div style={styles.pagination}>
+        {page > 1 && (
+          <button style={styles.pageButton} onClick={showPreviousPage}>
+            Previous
+          </button>
+        )}
+        {lastVal < totalLines && (
+          <button style={styles.pageButton} onClick={showNextPage}>
+            Next
+          </button>
+        )}
       </div>
     </div>
   );
@@ -152,32 +134,61 @@ const SearchPage = () => {
 
 const styles = {
   container: {
-    width: "80%",
-    margin: "100px auto",
+    width: "100%",
+    height: "100vh",
+    margin: "0 auto",
     textAlign: "center",
     padding: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+    backgroundColor: "#f9f9f9",
+    overflow: "hidden",
   },
-  fileInput: {
-    marginBottom: "15px",
+  searchContainer: {
+    marginBottom: "20px",
+  },
+  input: {
+    padding: "5px", // Reduced padding
+    marginRight: "5px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    width: "200px", // Reduced width
+    fontSize: "14px", // Reduced font size
   },
   button: {
-    padding: "10px 20px",
+    padding: "5px 10px", // Reduced padding
     backgroundColor: "#4CAF50",
     color: "#fff",
-    fontSize: "16px",
+    fontSize: "14px", // Reduced font size
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  tableContainer: {
+    flex: 1,
+    overflow: "auto",
+    maxHeight: "calc(100vh - 100px)", // Adjusted to increase table view height
+    marginBottom: "20px",
+    backgroundColor: "#fff",
+    borderRadius: "8px",
+    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+    width: "100%", // Increased width
+    margin: "0 auto", // Center the table
+  },
+  pagination: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "10px",
+  },
+  pageButton: {
+    padding: "5px 10px", // Reduced padding
+    margin: "0 5px",
+    backgroundColor: "#000", // Set button color to black
+    color: "#fff", // Set text color to white
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
   },
   error: {
     color: "red",
-    marginTop: "10px",
-  },
-  success: {
-    color: "green",
     marginTop: "10px",
   },
 };
