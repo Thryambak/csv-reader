@@ -6,10 +6,14 @@ const multer = require("multer"); // Multer for file uploads
 const { MongoClient, GridFSBucket, ObjectId } = require("mongodb");
 
 const app = express();
-const port = 8443;
+const port = process.env.PORT || 8443;
+const path = require("path");
 
 // MongoDB connection¸
-const uri = "mongodb://localhost:27017"; // Your MongoDB URI
+const uri =
+  "mongodb+srv://admin:LRw1ntGzyXjN5mMd@cluster0.yqst6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+// const uri = "mongodb://localhost:27017"; // Your MongoDB URI
 const client = new MongoClient(uri, { useUnifiedTopology: true });
 const dbName = "csvreader";
 let db, bucket;
@@ -20,7 +24,7 @@ client.connect().then(() => {
   console.log("Connected to MongoDB");
 });
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "https://large-csv-reader.netlify.app" }));
 app.use(bodyParser.json({ limit: "1gb" }));
 app.use(bodyParser.urlencoded({ limit: "1gb", extended: true }));
 

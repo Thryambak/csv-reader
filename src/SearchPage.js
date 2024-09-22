@@ -15,6 +15,7 @@ const SearchPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const [showSearchButton, setShowSearchButton] = useState(false);
+  const url = "https://csv-reader-m1md.onrender.com";
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -72,7 +73,7 @@ const SearchPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:8443/download-csv");
+      const response = await fetch(url + "/download-csv");
       const result = await response.text();
       setContent(result);
       setShowSearchButton(true);

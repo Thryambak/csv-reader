@@ -7,6 +7,7 @@ const FileUploadPage = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [redirect, setRedirect] = useState(false); // State to trigger navigation
   const navigate = useNavigate();
+  const url = "https://csv-reader-m1md.onrender.com";
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -41,7 +42,7 @@ const FileUploadPage = () => {
     try {
       const formData = new FormData();
       formData.append("file", data);
-      const response = await fetch("http://localhost:8443/upload-csv", {
+      const response = await fetch(url + "/upload-csv", {
         method: "POST",
         body: formData,
       });
